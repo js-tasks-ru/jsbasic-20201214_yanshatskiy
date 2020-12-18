@@ -7,7 +7,7 @@
 function truncate(str, maxlength) {
   if (str.length <= maxlength) {
     return str;
-  } else {
-    return str.substring(0, 19) + '…';
   }
+
+  return `${str.substring(0, 19)}…`;
 }
