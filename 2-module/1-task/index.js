@@ -4,5 +4,16 @@
  * @returns {Number}
  */
 function sumSalary(salaries) {
-  // ваш код...
+  const { month, currency, isPayed, ...names } = salaries;
+  let result = 0;
+
+  for (const key in names) {
+    let val = names[key];
+
+    if (val && typeof val !== "string" && isFinite(val)) {
+      result += names[key];
+    }
+  }
+
+  return result;
 }
