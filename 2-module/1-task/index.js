@@ -10,7 +10,7 @@ function sumSalary(salaries) {
   for (const key in names) {
     let val = names[key];
 
-    if (val && typeof val !== "string" && val !== isNaN && isFinite(val)) {
+    if (val && typeof val !== "string" && isFinite(val)) {
       result += names[key];
     }
   }
