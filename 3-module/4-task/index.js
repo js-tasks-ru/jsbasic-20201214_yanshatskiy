@@ -10,6 +10,7 @@ function showSalary(users, age) {
 
       return result + user.name + ', ' + user.balance + '\n';
     }
+    
     return result;
   },'');
 

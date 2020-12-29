@@ -10,9 +10,9 @@ function getMinMax(str) {
     .split(" ")
     .reduce((numbers, elem) => {
       if (elem !== "" && !Number.isNaN(+elem)) {
-        
         numbers.push(+elem);
       }
+      
       return numbers;
     }, [])
     .sort((a, b) => a - b);
