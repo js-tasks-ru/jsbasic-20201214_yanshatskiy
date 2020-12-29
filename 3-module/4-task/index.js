@@ -5,5 +5,14 @@
  * @returns {string}
  */
 function showSalary(users, age) {
-  // ваш код...
+  const list = users.reduce((result, user) => {
+    if(user.age <= age) {
+
+      return result + user.name + ', ' + user.balance + '\n';
+    }
+    
+    return result;
+  },'');
+
+  return list.substring(0, list.length-1);
 }
