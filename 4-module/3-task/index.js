@@ -3,7 +3,7 @@
  * @param {Element} table
  */
 function highlight(table) {
-	[...table.querySelectorAll("tr")].map((row, index) => {
+	[...table.querySelectorAll("tr")].forEach((row, index) => {
 		if (index > 0) {
 		  const isAvailable = row.lastElementChild.dataset.available;
 
