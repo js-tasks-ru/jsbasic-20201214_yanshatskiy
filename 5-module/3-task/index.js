@@ -8,7 +8,7 @@ function initCarousel() {
   let position = carouselInnerWidth;
   let slide = 1;
 
-  carouselArrowLeft.style.display = "none";
+  hideElement(carouselArrowLeft);
 
   carousel.addEventListener("click", (event) => {
     const target = event.target.closest(".carousel__arrow");
@@ -16,28 +16,41 @@ function initCarousel() {
     if (!target) return;
 
     if (target.classList.contains("carousel__arrow_right")) {
-      carouselInner.style.transform = `translateX(-${position}px)`;
+      carouselInner.style.transform = translateXdataRender(position);
       position += carouselInnerWidth;
       slide++;
     }
 
     if (target.classList.contains("carousel__arrow_left")) {
       position -= carouselInnerWidth;
-      carouselInner.style.transform = `translateX(-${position - carouselInnerWidth}px)`;
+      carouselInner.style.transform = translateXdataRender(position, carouselInnerWidth);
       slide--;
     }
 
     if (slide === carouselSlidesNumber) {
-      carouselArrowRight.style.display = "none";
+      hideElement(carouselArrowRight);
     } else {
-      carouselArrowRight.style.display = "";
+      showElement(carouselArrowRight);
     }
 
     if (slide === 1) {
-      carouselArrowLeft.style.display = "none";
+      hideElement(carouselArrowLeft);
     } else {
-      carouselArrowLeft.style.display = "";
+      showElement(carouselArrowLeft);
     }
   });
+
+  function translateXdataRender(position, shift = 0) {
+    return `translateX(-${position - shift}px)`
+  }
+
+  function hideElement(element) {
+    element.style.display = "none";
+  }
+
+  function showElement(element) {
+    element.style.display = "";
+  }
 }
+
 
