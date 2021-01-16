@@ -34,8 +34,7 @@ export default class ProductCard {
 
   listener() {
     this.cardButton.addEventListener("click", this._clickOnButton);
-    this.elem.addEventListener("product-add", (event) => {
-      console.log(event);
+    this.elem.addEventListener("product-add", () => {
     });
   }
   _clickOnButton() {

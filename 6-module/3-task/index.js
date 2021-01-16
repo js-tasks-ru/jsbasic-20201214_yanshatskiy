@@ -27,8 +27,7 @@ export default class Carousel {
       });
     })
 
-    this.elem.addEventListener("product-add", (event) => {
-      console.log(event);
+    this.elem.addEventListener("product-add", () => {
     });
   }
   _clickOnButton(event) {
