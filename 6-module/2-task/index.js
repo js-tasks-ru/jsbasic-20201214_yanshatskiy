@@ -2,46 +2,48 @@ import createElement from "../../assets/lib/create-element.js";
 
 export default class ProductCard {
   constructor({ name, price, category, image, id }) {
-    this.name = name;
-    this.price = price;
-    this.category = category;
-    this.image = image;
-    this.id = id;
-    this.elem = createElement(this.render());
-    this.cardButton = this.elem.querySelector(".card__button");
-    this._clickOnButton = this._clickOnButton.bind(this);
-    this.listener();
+    this._name = name;
+    this._price = price;
+    this._category = category;
+    this._image = image;
+    this._id = id;
+    this.elem = null;
+    this._render();
+    this._cardButton = this.elem.querySelector(".card__button");
+    this._onClickButton = this._onClickButton.bind(this);
+    this._listener();
   }
 
-  render() {
+  _render() {
+    const layout =  this._getLayout();
+    this.elem = createElement(layout);
+  }
+
+  _listener() {
+    this._cardButton.addEventListener("click", this._onClickButton);
+  }
+
+  _onClickButton() {
+    const event = new CustomEvent("product-add", {
+      detail: this._id,
+      bubbles: true,
+    });
+
+    this.elem.dispatchEvent(event);
+  }
+  _getLayout () {
     return `
     <div class="card">
     <div class="card__top">
-        <img src="/assets/images/products/${
-          this.image
-        }" class="card__image" alt="product">
-        <span class="card__price">€${this.price.toFixed(2)}</span>
+        <img src="/assets/images/products/${this._image}" class="card__image" alt="product">
+        <span class="card__price">€${this._price.toFixed(2)}</span>
     </div>
     <div class="card__body">
-        <div class="card__title">${this.name}</div>
+        <div class="card__title">${this._name}</div>
         <button type="button" class="card__button">
             <img src="/assets/images/icons/plus-icon.svg" alt="icon">
         </button>
-    </div>
-</div>
-    `;
-  }
-
-  listener() {
-    this.cardButton.addEventListener("click", this._clickOnButton);
-    this.elem.addEventListener("product-add", () => {
-    });
-  }
-  _clickOnButton() {
-    const event = new CustomEvent("product-add", {
-      detail: this.id,
-      bubbles: true,
-    });
-    this.elem.dispatchEvent(event);
+        </div>
+    </div> `;
   }
 }

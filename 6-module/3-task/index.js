@@ -1,80 +1,96 @@
+import { hideElement, showElement } from "./services.js";
 import createElement from "../../assets/lib/create-element.js";
 
 export default class Carousel {
   constructor(slides) {
-    this.slides = slides;
-    this.elem = document.createElement("div");
-    this.elem.classList.add("carousel");
-    this.elem = createElement(this.renderSlides());
-    this.carouselArrowRight = this.elem.querySelector(".carousel__arrow_right");
-    this.carouselArrowLeft = this.elem.querySelector(".carousel__arrow_left");
-    this.carouselSlidesNumber = this.elem.querySelectorAll(".carousel__slide").length;
-    this.carouselInner = this.elem.querySelector(".carousel__inner");
-    this.cardButtons = this.elem.querySelectorAll(".carousel__button");
-    this.carouselInnerWidth;
-    this.position;
-    this.slide = 1;
-    this.hideElement(this.carouselArrowLeft);
-    this.listener();
+    this._slides = slides;
+    this.elem = null;
+    this._render();
+    this._carouselArrowRight = this.elem.querySelector(".carousel__arrow_right");
+    this._carouselArrowLeft = this.elem.querySelector(".carousel__arrow_left");
+    this._carouselSlidesNumber = this.elem.querySelectorAll(".carousel__slide").length;
+    this._carouselInner = this.elem.querySelector(".carousel__inner");
+    this._cardButtons = this.elem.querySelectorAll(".carousel__button");
+    this._slide = 1;
+    hideElement(this._carouselArrowLeft);
+    this._listener();
   }
 
-  listener() {
-    this.elem.addEventListener("click", (event) => this.moveSlides(event));
+  _render() {
+    const layout = this._getLayout();
+    this.elem = createElement(layout);
+    this.elem.classList.add("carousel");
+  }
 
-    [... this.cardButtons].forEach(button => {
-       button.addEventListener("click", (event)=> {
-      this._clickOnButton(event);
+  _listener() {
+    this.elem.addEventListener("click", (event) => this._moveSlides(event));
+
+    [...this._cardButtons].forEach((button) => {
+      button.addEventListener("click", (event) => {
+        this._clickOnButton(event);
       });
-    })
-
-    this.elem.addEventListener("product-add", () => {
     });
   }
   _clickOnButton(event) {
     const customEvent = new CustomEvent("product-add", {
-      detail: event.target.closest('button').dataset.id,
+      detail: event.target.closest("button").dataset.id,
       bubbles: true,
     });
     this.elem.dispatchEvent(customEvent);
   }
 
-  moveSlides(event) {
-    if (!this.position && this.position != 0) {
-      this.carouselInnerWidth = this.carouselInner.offsetWidth;
-      this.position = this.carouselInnerWidth;
-    }
-
+  _moveSlides(event) {
     const target = event.target.closest(".carousel__arrow");
-
     if (!target) return;
 
+    this._getCarouselInnerWidth();
+    this._arrowRightAction(target);
+    this._arrowLeftAction(target);
+    this._hideArrowRight();
+    this._hideArrowLeft();
+  }
+
+  _getCarouselInnerWidth() {
+    if (!this.position && this.position != 0) {
+      this._carouselInnerWidth = this._carouselInner.offsetWidth;
+      this.position = this._carouselInnerWidth;
+    }
+  }
+
+  _arrowRightAction(target) {
     if (target.classList.contains("carousel__arrow_right")) {
-      this.carouselInner.style.transform = this.translateXdataRender(
+      this._carouselInner.style.transform = this.translateXdataRender(
         this.position
       );
-      this.position += this.carouselInnerWidth;
-      this.slide++;
+      this.position += this._carouselInnerWidth;
+      this._slide++;
     }
+  }
 
+  _arrowLeftAction(target) {
     if (target.classList.contains("carousel__arrow_left")) {
-      this.position -= this.carouselInnerWidth;
-      this.carouselInner.style.transform = this.translateXdataRender(
+      this.position -= this._carouselInnerWidth;
+      this._carouselInner.style.transform = this.translateXdataRender(
         this.position,
-        this.carouselInnerWidth
+        this._carouselInnerWidth
       );
-      this.slide--;
+      this._slide--;
     }
+  }
 
-    if (this.slide === this.carouselSlidesNumber) {
-      this.hideElement(this.carouselArrowRight);
+  _hideArrowRight() {
+    if (this._slide === this._carouselSlidesNumber) {
+      hideElement(this._carouselArrowRight);
     } else {
-      this.showElement(this.carouselArrowRight);
+      showElement(this._carouselArrowRight);
     }
+  }
 
-    if (this.slide === 1) {
-      this.hideElement(this.carouselArrowLeft);
+  _hideArrowLeft() {
+    if (this._slide === 1) {
+      hideElement(this._carouselArrowLeft);
     } else {
-      this.showElement(this.carouselArrowLeft);
+      showElement(this._carouselArrowLeft);
     }
   }
 
@@ -82,16 +98,8 @@ export default class Carousel {
     return `translateX(-${position - shift}px)`;
   }
 
-  hideElement(element) {
-    element.style.display = "none";
-  }
-
-  showElement(element) {
-    element.style.display = "";
-  }
-
-  renderSlides() {
-    let resultHtml = `
+  _getLayout() {
+    let layout = `
     <div class="carousel">
       <div class="carousel__arrow carousel__arrow_right">
         <img src="/assets/images/icons/angle-icon.svg" alt="icon">
@@ -101,10 +109,12 @@ export default class Carousel {
       </div>
       <div class="carousel__inner">`;
 
-    this.slides.forEach((slide) => {
-      resultHtml += `
+    this._slides.forEach((slide) => {
+      layout += `
       <div class="carousel__slide" data-id="penang-shrimp">
-          <img src="/assets/images/carousel/${slide.image}" class="carousel__img" alt="slide">
+          <img src="/assets/images/carousel/${
+            slide.image
+          }" class="carousel__img" alt="slide">
           <div class="carousel__caption">
             <span class="carousel__price">€${slide.price.toFixed(2)}</span>
             <div class="carousel__title">${slide.name}</div>
@@ -115,10 +125,10 @@ export default class Carousel {
         </div>`;
     });
 
-    resultHtml += `
+    layout += `
       </div>
     </div>`;
 
-    return resultHtml;
+    return layout;
   }
 }

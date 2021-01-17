@@ -5,11 +5,11 @@
  * Пример одного элемента, описывающего строку таблицы
  *
  *      {
-     *          name: '',
-     *          age: 25,
-     *          salary: '1000',
-     *          city: 'Petrozavodsk'
-     *   },
+ *          name: '',
+ *          age: 25,
+ *          salary: '1000',
+ *          city: 'Petrozavodsk'
+ *   },
  *
  * @constructor
  */
@@ -28,14 +28,32 @@
  *
  * @constructor
  */
+import createElement from "../../assets/lib/create-element.js";
+
 export default class UserTable {
   constructor(rows) {
-    this.elem = document.createElement("div");
-    this.elem.innerHTML = this.render(rows);
-    this.buttons = this.elem.querySelectorAll("button");
-    this.listeners(this.buttons);
+    this._rows = rows;
+    this.elem = null;
+    this._render();
+    this._buttons = this.elem.querySelectorAll("button");
+    this._listeners(this._buttons);
   }
-  render(rows) {
+  _render() {
+    const layout = this._getLayout();
+    this.elem = createElement(layout);
+  }
+
+  _listeners([...buttons]) {
+    buttons.forEach((button) => {
+      button.addEventListener("click", () => {
+        button.closest("tbody").remove();
+        button.removeEventListener("click", () => {
+          button.closest("tbody").remove();
+        });
+      });
+    });
+  }
+  _getLayout () {
     let layout = `<table>
       <thead>
         <tr>
@@ -47,7 +65,7 @@ export default class UserTable {
         </tr>
       </thead>`;
 
-    rows.forEach((elem) => {
+    this._rows.forEach((elem) => {
       layout += ` <tbody>
         <tr>
           <td>${elem.name}</td>
@@ -58,14 +76,9 @@ export default class UserTable {
         </tr>
       </tbody>`;
     });
-    return layout + `</table>`;
-  }
 
-  listeners([...buttons]) {
-    buttons.forEach((button) => {
-      button.addEventListener("click", () => {
-        button.closest("tbody").remove();
-      });
-    });
+    layout += `</table>`;
+
+    return layout;
   }
 }
