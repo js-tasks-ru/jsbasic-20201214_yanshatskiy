@@ -19,7 +19,6 @@ export default class Carousel {
   _render() {
     const layout = this._getLayout();
     this.elem = createElement(layout);
-    this.elem.classList.add("carousel");
   }
 
   _listener() {
@@ -27,11 +26,11 @@ export default class Carousel {
 
     [...this._cardButtons].forEach((button) => {
       button.addEventListener("click", (event) => {
-        this._clickOnButton(event);
+        this._onClickButton(event);
       });
     });
   }
-  _clickOnButton(event) {
+  _onClickButton(event) {
     const customEvent = new CustomEvent("product-add", {
       detail: event.target.closest("button").dataset.id,
       bubbles: true,
@@ -109,12 +108,19 @@ export default class Carousel {
       </div>
       <div class="carousel__inner">`;
 
+    layout += this._getSlidesTempalte();
+    layout += `
+      </div>
+    </div>`;
+
+    return layout;
+  }
+  _getSlidesTempalte() {
+    let slidesTempalte;
     this._slides.forEach((slide) => {
-      layout += `
-      <div class="carousel__slide" data-id="penang-shrimp">
-          <img src="/assets/images/carousel/${
-            slide.image
-          }" class="carousel__img" alt="slide">
+      slidesTempalte += `
+          <div class="carousel__slide" data-id="penang-shrimp">
+          <img src="/assets/images/carousel/${slide.image}" class="carousel__img" alt="slide">
           <div class="carousel__caption">
             <span class="carousel__price">€${slide.price.toFixed(2)}</span>
             <div class="carousel__title">${slide.name}</div>
@@ -125,10 +131,6 @@ export default class Carousel {
         </div>`;
     });
 
-    layout += `
-      </div>
-    </div>`;
-
-    return layout;
+    return slidesTempalte;
   }
 }

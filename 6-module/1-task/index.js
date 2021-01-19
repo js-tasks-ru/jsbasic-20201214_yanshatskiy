@@ -45,15 +45,19 @@ export default class UserTable {
 
   _listeners([...buttons]) {
     buttons.forEach((button) => {
+      const removeClosestElement = ()=> button.closest("tbody").remove();
+
       button.addEventListener("click", () => {
-        button.closest("tbody").remove();
+        removeClosestElement();
+
         button.removeEventListener("click", () => {
-          button.closest("tbody").remove();
+          removeClosestElement();
         });
       });
     });
   }
-  _getLayout () {
+
+  _getLayout() {
     let layout = `<table>
       <thead>
         <tr>
@@ -65,8 +69,17 @@ export default class UserTable {
         </tr>
       </thead>`;
 
+    layout += this._getRowsTemplate();
+    layout += `</table>`;
+
+    return layout;
+  }
+
+  _getRowsTemplate() {
+
+    let rowsTemplate;
     this._rows.forEach((elem) => {
-      layout += ` <tbody>
+      rowsTemplate += ` <tbody>
         <tr>
           <td>${elem.name}</td>
           <td>${elem.age}</td>
@@ -77,8 +90,6 @@ export default class UserTable {
       </tbody>`;
     });
 
-    layout += `</table>`;
-
-    return layout;
+    return rowsTemplate;
   }
 }
