@@ -46,10 +46,8 @@ export default class UserTable {
   _listeners([...buttons]) {
     buttons.forEach((button) => {
       const removeClosestElement = ()=> button.closest("tbody").remove();
-
       button.addEventListener("click", () => {
         removeClosestElement();
-
         button.removeEventListener("click", () => {
           removeClosestElement();
         });
@@ -58,7 +56,8 @@ export default class UserTable {
   }
 
   _getLayout() {
-    let layout = `<table>
+
+    return `<table>
       <thead>
         <tr>
           <th>Имя</th>
@@ -67,17 +66,14 @@ export default class UserTable {
           <th>Город</th>
           <th></th>
         </tr>
-      </thead>`;
-
-    layout += this._getRowsTemplate();
-    layout += `</table>`;
-
-    return layout;
+      </thead>
+      ${this._getRowsTemplate()}
+   </table>`;
   }
 
   _getRowsTemplate() {
 
-    let rowsTemplate;
+    let rowsTemplate = '';
     this._rows.forEach((elem) => {
       rowsTemplate += ` <tbody>
         <tr>

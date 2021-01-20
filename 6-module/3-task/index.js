@@ -98,7 +98,8 @@ export default class Carousel {
   }
 
   _getLayout() {
-    let layout = `
+
+    return  `
     <div class="carousel">
       <div class="carousel__arrow carousel__arrow_right">
         <img src="/assets/images/icons/angle-icon.svg" alt="icon">
@@ -106,17 +107,13 @@ export default class Carousel {
       <div class="carousel__arrow carousel__arrow_left">
         <img src="/assets/images/icons/angle-left-icon.svg" alt="icon">
       </div>
-      <div class="carousel__inner">`;
-
-    layout += this._getSlidesTempalte();
-    layout += `
+      <div class="carousel__inner">
+      ${this._getSlidesTempalte()}
       </div>
     </div>`;
-
-    return layout;
   }
   _getSlidesTempalte() {
-    let slidesTempalte;
+    let slidesTempalte = '';
     this._slides.forEach((slide) => {
       slidesTempalte += `
           <div class="carousel__slide" data-id="penang-shrimp">
@@ -130,7 +127,6 @@ export default class Carousel {
           </div>
         </div>`;
     });
-
     return slidesTempalte;
   }
 }
