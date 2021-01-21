@@ -25,8 +25,7 @@ export default class Cart {
     if (!cartItem) {
 
       return;
-
-    } else {
+    }
       cartItem.count += amount;
 
       if (cartItem.count === 0) {
@@ -38,7 +37,6 @@ export default class Cart {
         });
         this.cartItems = newArr;
       }
-    }
 
     this.onProductUpdate(cartItem);
   }
