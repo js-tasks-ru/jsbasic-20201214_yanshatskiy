@@ -23,7 +23,6 @@ export default class Cart {
   updateProductCount(productId, amount) {
     let cartItem = this.cartItems.find((item) => item.product.id === productId);
     if (!cartItem) {
-
       return;
     }
       cartItem.count += amount;
