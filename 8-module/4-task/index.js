@@ -149,7 +149,6 @@ export default class Cart {
     this.updateProductCount(productId, amount);
 
     if (this.isEmpty()) {
-      console.log('перед остановкой лисенера');
       this._modal._elem.removeEventListener("click", (e) => this._listenerOfModal(e));
       this._modal.close();
     }
