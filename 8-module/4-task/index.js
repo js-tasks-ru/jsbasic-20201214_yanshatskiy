@@ -56,17 +56,23 @@ export default class Cart {
   }
 
   getTotalCount() {
-    let totalCount = 0;
-    this.cartItems.forEach((item) => (totalCount += item.count));
+    const totalCount = this.cartItems.reduce(
+      (result, item) => {
+        result += item.count;
+
+        return result;
+      }, 0);
 
     return totalCount;
   }
 
   getTotalPrice() {
-    let totalPrice = 0;
-    this.cartItems.forEach(
-      (item) => (totalPrice += item.product.price * item.count)
-    );
+    const totalPrice = this.cartItems.reduce(
+      (result, item) => {
+        result += item.product.price * item.count;
+
+        return result;
+      }, 0 );
 
     return totalPrice;
   }
@@ -126,37 +132,31 @@ export default class Cart {
     modal.setBody(this._getLayoutOfCart());
     modal.open();
 
-    this._modal._elem.addEventListener("click", (e) => this._listenerOfModal(e));
+    this._modal._elem.addEventListener("click", this._onEventOfModal);
 
     const formOfModal = modal._elem.querySelector(`.cart-form`);
-    formOfModal.addEventListener("submit", (e) => {
-
-      this.onSubmit(e);
-    });
+    formOfModal.addEventListener("submit", this._onSubmit);
   }
 
-  _listenerOfModal(e) {
-    const button = e.target.closest("button");
-    let amount = 0;
+  _onEventOfModal = (e) => {
+    const amount = e.target.closest(".cart-counter__button_plus") ? 1 : -1;
 
-    if (button.classList.contains("cart-counter__button_minus")) {
-      amount = -1;
-    } else if (button.classList.contains("cart-counter__button_plus")) {
-      amount = 1;
+    const closestCardProduct = e.target.closest(".cart-product");
+    if(!closestCardProduct) {
+      return;
     }
-    const closestCardProduct = button.closest(".cart-product");
     const productId = closestCardProduct.dataset.productId;
     this.updateProductCount(productId, amount);
 
     if (this.isEmpty()) {
-      this._modal._elem.removeEventListener("click", (e) => this._listenerOfModal(e));
       this._modal.close();
+      this._modal._elem.removeEventListener("click", this._onEventOfModal);
     }
   }
 
 
   _getLayoutOfCart() {
-    let layoutOfCart = document.createElement("div");
+    const layoutOfCart = createElement("<div></div>");
     this.cartItems.forEach((item) => {
       layoutOfCart.append(this.renderProduct(item.product, item.count));
     });
@@ -166,57 +166,59 @@ export default class Cart {
     return layoutOfCart;
   }
 
+
+
   onProductUpdate(cartItem) {
     this.cartIcon.update(this);
 
-    if (document.body.classList.contains("is-modal-open")) {
-      if (cartItem.count === 0) {
-        let elemForDelite = this._modal._elem.querySelector(
-          `[data-product-id="${cartItem.product.id}"]`
-        );
-        elemForDelite.remove();
+    const isModalOpen = document.body.classList.contains("is-modal-open");
+    if (!isModalOpen) {
 
-      } else {
-
-        let productCount = this._modal._elem.querySelector(
-          `[data-product-id="${cartItem.product.id}"] .cart-counter__count`
-        );
-        productCount.textContent = cartItem.count;
-
-        let productPrice = this._modal._elem.querySelector(
-          `[data-product-id="${cartItem.product.id}"] .cart-product__price`
-        );
-        productPrice.textContent = `€${(
-          cartItem.product.price * cartItem.count
-        ).toFixed(2)}`;
-
-        let infoPrice = this._modal._elem.querySelector(
-          `.cart-buttons__info-price`
-        );
-        infoPrice.textContent = `€${this.getTotalPrice().toFixed(2)}`;
-      }
+      return;
     }
+
+    const isHasItemsInCart = cartItem.count !== 0;
+    if (!isHasItemsInCart) {
+      let elemForDelite = this._modal._elem.querySelector(`[data-product-id="${cartItem.product.id}"]`);
+      elemForDelite.remove();
+
+      return;
+    }
+
+    this._onProductPriceUpdate(cartItem);
   }
 
-  onSubmit(event) {
+  _onProductPriceUpdate(cartItem) {
+    let productCount = this._modal._elem.querySelector(`[data-product-id="${cartItem.product.id}"] .cart-counter__count`);
+    productCount.textContent = cartItem.count;
+
+    let productPrice = this._modal._elem.querySelector(`[data-product-id="${cartItem.product.id}"] .cart-product__price`);
+    productPrice.textContent = `€${(cartItem.product.price * cartItem.count).toFixed(2)}`;
+
+    let infoPrice = this._modal._elem.querySelector(`.cart-buttons__info-price`);
+    infoPrice.textContent = `€${this.getTotalPrice().toFixed(2)}`;
+  }
+
+  _onSubmit = async (event) =>{
     event.preventDefault();
     let formOfModal = this._modal._elem.querySelector(`.cart-form`);
     let bodyOfForm = new FormData(formOfModal);
 
-    fetch("https://httpbin.org/post", {
+    let response = await fetch("https://httpbin.org/post", {
       method: "POST",
       body: bodyOfForm,
-    }).then(this._successSubmit());
+    });
+    if (response.status == 200) {
+      this._successSubmit();
+    }
   }
 
   _successSubmit() {
-    const titleOfModal = this._modal._elem.querySelector(".modal__title");
-    titleOfModal.textContent = "Success!";
-
+    this._modal._elem.removeEventListener("click", this._onEventOfModal);
+    this._modal.setTitle('Succsess!');
     this.cartItems = [];
 
-    const modalBodyDiv = this._modal._elem.querySelector(".modal .modal__body");
-    modalBodyDiv.innerHTML = `
+    const successfulModalBody = `
     <div class="modal__body-inner">
     <p>
       Order successful! Your order is being cooked :) <br>
@@ -224,6 +226,11 @@ export default class Cart {
       <img src="/assets/images/delivery.gif">
     </p>
   </div>`;
+    this._modal.setBody(createElement(successfulModalBody));
+    this._modal.close();
+    this._modal.open();
+    this.cartIcon.update(this);
+
   }
 
   addEventListeners() {
