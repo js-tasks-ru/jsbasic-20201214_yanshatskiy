@@ -189,6 +189,10 @@ export default class Cart {
   }
 
   _onProductPriceUpdate(cartItem) {
+    if(!this._modal) {
+
+      return;
+    }
     let productCount = this._modal._elem.querySelector(`[data-product-id="${cartItem.product.id}"] .cart-counter__count`);
     productCount.textContent = cartItem.count;
 
@@ -215,7 +219,7 @@ export default class Cart {
 
   _successSubmit() {
     this._modal._elem.removeEventListener("click", this._onEventOfModal);
-    this._modal.setTitle('Succsess!');
+    this._modal.setTitle('Success!');
     this.cartItems = [];
 
     const successfulModalBody = `
