@@ -135,7 +135,7 @@ export default class Cart {
     this._modal._elem.addEventListener("click", this._onEventOfModal);
 
     const formOfModal = modal._elem.querySelector(`.cart-form`);
-    formOfModal.addEventListener("submit", this._onSubmit);
+    formOfModal.addEventListener("submit", this._onSubmit, { once: true });
   }
 
   _onEventOfModal = (e) => {
