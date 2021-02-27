@@ -46,10 +46,8 @@ export default class UserTable {
   _listeners([...buttons]) {
     buttons.forEach((button) => {
       const removeClosestElement = ()=> button.closest("tbody").remove();
-
       button.addEventListener("click", () => {
         removeClosestElement();
-
         button.removeEventListener("click", () => {
           removeClosestElement();
         });
