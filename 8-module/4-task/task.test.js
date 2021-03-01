@@ -280,11 +280,7 @@ describe('8-module-4-task', () => {
         it('должна отображать уменьшение общей стоимости товара', () => {
           let totalPrice = document.querySelector(`.cart-buttons__info-price`);
 
-<<<<<<< HEAD
           expect(totalPrice.textContent).toBe('€39.50');
-=======
-          expect(totalPrice.textContent).toBe('€39.50'); 
->>>>>>> master
         });
 
         it('должна закрывать модальное окно если товаров в корзине не осталось', () => {
