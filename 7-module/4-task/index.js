@@ -5,22 +5,23 @@ export default class StepSlider {
     this.elem = null;
     this._steps = steps;
     this._value = value;
+    this._initialPercentage = (100 / this._steps) * this._value;
 
     this._render();
-    this._getAllElements();
+    this._initAllElements();
 
-    this._listener();
+    this._addListeners();
   }
-  _getAllElements() {
+  _initAllElements() {
     this._sliderValue = this.elem.querySelector(".slider__value");
     this._sliderSteps = this.elem.querySelectorAll(".slider__steps span");
     this._sliderThumb = this.elem.querySelector(".slider__thumb");
-    this._sliderThumb.ondragstart = () => false;
     this._sliderProgress = this.elem.querySelector(".slider__progress");
   }
 
-  _listener() {
+  _addListeners() {
     this.elem.addEventListener("click", this._clickHandler);
+    this._sliderThumb.ondragstart = () => false;
     this._sliderThumb.addEventListener("pointerdown", (e) => {
       e.preventDefault();
       e.stopPropagation();
@@ -32,7 +33,7 @@ export default class StepSlider {
       this._actionsOnClick(e);
       this.elem.classList.remove("slider_dragging");
       document.removeEventListener("pointermove", this._thumbMoveHandler);
-      this._makeCustomEvent(this._value);
+      this._dispatchCustomEvent(this._value);
     });
   }
 
@@ -48,7 +49,7 @@ export default class StepSlider {
       leftRelative = 1;
     }
     let leftPercents = leftRelative * 100;
-    this._getNewValue(leftRelative);
+    this._setleftRelative(leftRelative);
 
     this._sliderValue.textContent = this._value;
     this._makeSliderStepActiv(this._value);
@@ -59,12 +60,12 @@ export default class StepSlider {
 
   _clickHandler = (e) => {
     this._actionsOnClick(e);
-    this._makeCustomEvent(this._value);
+    this._dispatchCustomEvent(this._value);
   };
 
   _actionsOnClick(e) {
     let leftRelative = this._getleftRelative(e);
-    this._getNewValue(leftRelative);
+    this._setleftRelative(leftRelative);
 
     let valuePercents = (this._value / (this._steps - 1)) * 100;
     this._sliderValue.textContent = this._value;
@@ -79,13 +80,13 @@ export default class StepSlider {
     return left / this.elem.offsetWidth;
   }
 
-  _getNewValue(leftRelative) {
+  _setleftRelative(leftRelative) {
     let segments = this._steps - 1;
     let approximateValue = leftRelative * segments;
     this._value = Math.round(approximateValue);
   }
 
-  _makeCustomEvent(value) {
+  _dispatchCustomEvent(value) {
     const customEvent = new CustomEvent("slider-change", {
       detail: value,
       bubbles: true,
@@ -106,10 +107,10 @@ export default class StepSlider {
   _render() {
     this.elem = createElement(`
     <div class="slider">
-      <div class="slider__thumb" style="left: ${(100 / this._steps) * this._value}%;">
+      <div class="slider__thumb" style="left: ${this._initialPercentage}%;">
         <span class="slider__value">${this._value}</span>
       </div>
-      <div class="slider__progress" style="width: ${(100 / this._steps) * this._value}%;"></div>
+      <div class="slider__progress" style="width: ${this._initialPercentage}%;"></div>
       <div class="slider__steps">
      ${this._getSteps()}
       </div>
