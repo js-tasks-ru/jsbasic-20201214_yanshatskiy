@@ -9,7 +9,7 @@ export default class ProductGrid {
     this.elem = null;
 
     this._renderLayout();
-    this._container = document.querySelector("#container");
+    this._productsGridInner = this.elem.querySelector('.products-grid__inner');
 
   }
 
@@ -52,10 +52,9 @@ export default class ProductGrid {
 
 
     this._renderLayout();
-    this._container = document.querySelector("#container");
-    this._container.innerHTML = "";
 
-    this._container.append(this.elem);
+    this._productsGridInner.innerHTML = this._renderCards();
+
   }
 
   _categorySelect(product) {
