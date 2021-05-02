@@ -40,11 +40,11 @@ export default class ProductGrid {
 
       .filter((product) => {
 
-        return this._isAllowCheck("noNuts", product);
+        return this._noNutsSelect(product);
       })
       .filter((product) => {
 
-        return this._isAllowCheck("vegeterianOnly", product);
+        return this._vegeterianOnlySelect(product);
       })
       .filter((product) => {
 
@@ -85,14 +85,23 @@ export default class ProductGrid {
     return true;
   }
 
-  _isAllowCheck(filterItem, product) {
+  _noNutsSelect(product) {
+    if (this.filters["noNuts"]) {
 
-    if (this.filters[filterItem]) {
-      if (
-        (this.filters[filterItem] && product[filterItem]) ||
-        (this.filters[filterItem] && product[filterItem] === undefined) ||
-        this.filters[filterItem] === false
-      ) {
+      if (product["nuts"] === false || product["nuts"] === undefined)
+      {
+        return true;
+      }
+      return false;
+    }
+    return true;
+  }
+
+  _vegeterianOnlySelect(product) {
+    if (this.filters["vegeterianOnly"]) {
+
+      if (product["vegeterian"] === true)
+      {
         return true;
       }
       return false;
