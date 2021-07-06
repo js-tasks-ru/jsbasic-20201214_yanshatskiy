@@ -64,15 +64,29 @@ export default class StepSlider {
   };
 
   _actionsOnClick(e) {
-    let leftRelative = this._getleftRelative(e);
-    this._setleftRelative(leftRelative);
+    e.preventDefault();
+    e.stopPropagation();
 
-    let valuePercents = (this._value / (this._steps - 1)) * 100;
-    this._sliderValue.textContent = this._value;
-    this._makeSliderStepActiv(this._value);
+    if(e.target.classList.contains('slider')
+    || e.target.classList.contains('slider__progress')
+    || e.target.classList.contains('slider__steps'))
+      {
+        let leftRelative = this._getleftRelative(e);
+        this._setleftRelative(leftRelative);
 
-    this._sliderThumb.style.left = `${valuePercents}%`;
-    this._sliderProgress.style.width = `${valuePercents}%`;
+        let valuePercents = (this._value / (this._steps - 1)) * 100;
+        if (valuePercents < 0) {
+          valuePercents = 0;
+        }
+        if (valuePercents > 100) {
+          valuePercents = 100;
+        }
+        this._sliderValue.textContent = this._value;
+        this._makeSliderStepActiv(this._value);
+
+        this._sliderThumb.style.left = `${valuePercents}%`;
+        this._sliderProgress.style.width = `${valuePercents}%`;
+    }
   }
 
   _getleftRelative(e) {
@@ -92,7 +106,8 @@ export default class StepSlider {
       bubbles: true,
     });
 
-    this._sliderThumb.dispatchEvent(customEvent);
+    // this._sliderThumb.dispatchEvent(customEvent);
+    this.elem.dispatchEvent(customEvent);
   }
 
   _makeSliderStepActiv(value) {
